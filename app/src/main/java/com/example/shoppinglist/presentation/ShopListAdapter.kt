@@ -12,6 +12,7 @@ class ShopListAdapter :
     var onShopItemClickListener: ((ShopItem) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
+
         val enabledState = when (viewType) {
             SHOP_ITEM_ENABLED -> R.layout.item_shop_enabled
             SHOP_ITEM_DISABLED -> R.layout.item_shop_disabled
