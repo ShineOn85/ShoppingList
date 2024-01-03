@@ -25,6 +25,7 @@ class ShopItemFragment : Fragment() {
     private lateinit var etCount: EditText
     private lateinit var buttonSave: Button
     private var shopItemId = ShopItem.UNDEFINED_ID
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +40,15 @@ class ShopItemFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener){
+            onEditingFinishedListener = context
+        } else{
+            throw RuntimeException("Activity must implements OnEditingFinishedListener")
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
@@ -47,6 +57,7 @@ class ShopItemFragment : Fragment() {
         launchRightMode()
         observedViewModel()
     }
+
 
 
     private fun setListenerEditText() {
@@ -88,11 +99,12 @@ class ShopItemFragment : Fragment() {
             } else tilCount.error = null
         }
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.finish()
+            onEditingFinishedListener.onEditingFinished()
         }
     }
-    private fun launchRightMode(){
-        when (screenMode){
+
+    private fun launchRightMode() {
+        when (screenMode) {
             MODE_EDIT -> launchEditMode()
             MODE_ADD -> launchAddMode()
         }
@@ -121,6 +133,10 @@ class ShopItemFragment : Fragment() {
         etName = view.findViewById(R.id.et_name)
         etCount = view.findViewById(R.id.et_count)
         buttonSave = view.findViewById(R.id.save_button)
+    }
+
+    interface OnEditingFinishedListener{
+        fun onEditingFinished()
     }
 
     private fun parseParams() {
