@@ -1,7 +1,6 @@
 package com.example.shoppinglist.presentation
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,6 +25,10 @@ class ShopItemFragment : Fragment() {
     private lateinit var buttonSave: Button
     private var shopItemId = ShopItem.UNDEFINED_ID
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
+
+    interface OnEditingFinishedListener{
+        fun onEditingFinished()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -135,9 +138,7 @@ class ShopItemFragment : Fragment() {
         buttonSave = view.findViewById(R.id.save_button)
     }
 
-    interface OnEditingFinishedListener{
-        fun onEditingFinished()
-    }
+
 
     private fun parseParams() {
         val args = requireArguments()
@@ -185,3 +186,4 @@ class ShopItemFragment : Fragment() {
         }
     }
 }
+

@@ -24,8 +24,9 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
     }
 
     private fun launchRightMode() {
+
         val fragment = when (screenMode) {
-            MODE_EDIT -> ShopItemFragment.newInstanceEditItem(shopItemId)
+            MODE_EDIT ->  ShopItemFragment.newInstanceEditItem(shopItemId)
             MODE_ADD -> ShopItemFragment.newInstanceAddItem()
             else -> throw RuntimeException("Unknown screen mode: $screenMode")
         }
@@ -33,6 +34,7 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
             .replace(R.id.shop_item_container, fragment)
             .commit()
     }
+
 
     private fun parseIntent() {
         if (!intent.hasExtra(EXTRA_SCREEN_MODE)) {
