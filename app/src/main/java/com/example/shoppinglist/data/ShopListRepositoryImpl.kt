@@ -1,15 +1,10 @@
 package com.example.shoppinglist.data
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.example.shoppinglist.domain.ShopItem
 import com.example.shoppinglist.domain.ShopListRepository
-import java.lang.RuntimeException
-import kotlin.random.Random
 
 class ShopListRepositoryImpl(application: Application) : ShopListRepository {
 
@@ -17,19 +12,19 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
 
     private val mapper = ShopListMapper()
 
-    override fun addShopItem(shopItem: ShopItem) {
+    override suspend fun addShopItem(shopItem: ShopItem) {
         shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
     }
 
-    override fun deleteShopItem(shopItem: ShopItem) {
+    override suspend fun deleteShopItem(shopItem: ShopItem) {
         shopListDao.deleteShopItem(shopItem.id)
     }
 
-    override fun editShopItem(shopItem: ShopItem) {
+    override suspend fun editShopItem(shopItem: ShopItem) {
         shopListDao.addShopItem(mapper.mapEntityToDbModel(shopItem))
     }
 
-    override fun getShopItem(shopItemId: Int): ShopItem {
+    override suspend fun getShopItem(shopItemId: Int): ShopItem {
         val dbModel = shopListDao.getShopItem(shopItemId)
         return mapper.mapDbModelToEntity(dbModel)
     }
@@ -37,10 +32,4 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
     override fun getShopList(): LiveData<List<ShopItem>> = shopListDao.getShopList().map {
         mapper.mapListDbModelToListEntity(it)
     }
-//        MediatorLiveData<List<ShopItem>>().apply {
-//            addSource(shopListDao.getShopList()) {
-//                value = mapper.mapListDbModelToListEntity(it)
-//            }
-//        }
-
 }
