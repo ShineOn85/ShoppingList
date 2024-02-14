@@ -1,7 +1,6 @@
 package com.example.shoppinglist.presentation
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -9,22 +8,36 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
+import com.example.shoppinglist.ShopListApp
 import com.example.shoppinglist.presentation.ShopListAdapter.Companion.MAX_PULL_SIZE
 import com.example.shoppinglist.presentation.ShopListAdapter.Companion.SHOP_ITEM_DISABLED
 import com.example.shoppinglist.presentation.ShopListAdapter.Companion.SHOP_ITEM_ENABLED
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (application as ShopListApp).component
+    }
+
     private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: ShopListAdapter
+
+    @Inject
+    lateinit var adapter: ShopListAdapter
+
     private var shopItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupRecyclerView()
         shopItemContainer = findViewById(R.id.shop_item_container)
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         viewModel.shopList.observe(this) {
             adapter.submitList(it)
 

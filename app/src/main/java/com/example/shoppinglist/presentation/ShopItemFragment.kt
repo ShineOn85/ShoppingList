@@ -12,12 +12,24 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoppinglist.R
+import com.example.shoppinglist.ShopListApp
 import com.example.shoppinglist.domain.ShopItem
 import com.google.android.material.textfield.TextInputLayout
+import javax.inject.Inject
 
 class ShopItemFragment : Fragment() {
+
+    @Inject
+    lateinit var viewModel: ShopItemViewModel
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    private val component by lazy {
+        (requireActivity().application as ShopListApp).component
+    }
+
     private var screenMode = UNKNOWN_MODE
-    private lateinit var viewModel: ShopItemViewModel
     private lateinit var tilName: TextInputLayout
     private lateinit var tilCount: TextInputLayout
     private lateinit var etName: EditText
@@ -26,9 +38,10 @@ class ShopItemFragment : Fragment() {
     private var shopItemId = ShopItem.UNDEFINED_ID
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
-    interface OnEditingFinishedListener{
+    interface OnEditingFinishedListener {
         fun onEditingFinished()
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,17 +57,18 @@ class ShopItemFragment : Fragment() {
     }
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
-        if (context is OnEditingFinishedListener){
+        if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
-        } else{
+        } else {
             throw RuntimeException("Activity must implements OnEditingFinishedListener")
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ShopItemViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         initView(view)
         setListenerEditText()
         launchRightMode()
@@ -62,8 +76,8 @@ class ShopItemFragment : Fragment() {
     }
 
 
-
     private fun setListenerEditText() {
+
         etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 viewModel.resetErrorInputName()
@@ -137,7 +151,6 @@ class ShopItemFragment : Fragment() {
         etCount = view.findViewById(R.id.et_count)
         buttonSave = view.findViewById(R.id.save_button)
     }
-
 
 
     private fun parseParams() {
