@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.shoppinglist.R
@@ -30,12 +31,14 @@ class ShopItemFragment : Fragment() {
     }
 
     private var screenMode = UNKNOWN_MODE
+    private var shopItemId = ShopItem.UNDEFINED_ID
+
     private lateinit var tilName: TextInputLayout
     private lateinit var tilCount: TextInputLayout
     private lateinit var etName: EditText
     private lateinit var etCount: EditText
     private lateinit var buttonSave: Button
-    private var shopItemId = ShopItem.UNDEFINED_ID
+
     private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     interface OnEditingFinishedListener {
@@ -77,31 +80,13 @@ class ShopItemFragment : Fragment() {
 
 
     private fun setListenerEditText() {
+         etName.doOnTextChanged { _, _, _, _ ->
+             viewModel.resetErrorInputName()
+         }
+        etCount.doOnTextChanged { _, _, _, _ ->
+            viewModel.resetErrorInputCount()
+        }
 
-        etName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                viewModel.resetErrorInputName()
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
-        etCount.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.resetErrorInputCount()
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
     }
 
     private fun observedViewModel() {
