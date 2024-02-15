@@ -21,10 +21,11 @@ import javax.inject.Inject
 class ShopItemFragment : Fragment() {
 
     @Inject
-    lateinit var viewModel: ShopItemViewModel
-
-    @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
+    }
 
     private val component by lazy {
         (requireActivity().application as ShopListApp).component
@@ -71,7 +72,6 @@ class ShopItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[ShopItemViewModel::class.java]
         initView(view)
         setListenerEditText()
         launchRightMode()
@@ -86,7 +86,6 @@ class ShopItemFragment : Fragment() {
         etCount.doOnTextChanged { _, _, _, _ ->
             viewModel.resetErrorInputCount()
         }
-
     }
 
     private fun observedViewModel() {
