@@ -2,8 +2,6 @@ package com.example.shoppinglist.presentation
 
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,9 +78,9 @@ class ShopItemFragment : Fragment() {
 
 
     private fun setListenerEditText() {
-         etName.doOnTextChanged { _, _, _, _ ->
-             viewModel.resetErrorInputName()
-         }
+        etName.doOnTextChanged { _, _, _, _ ->
+            viewModel.resetErrorInputName()
+        }
         etCount.doOnTextChanged { _, _, _, _ ->
             viewModel.resetErrorInputCount()
         }

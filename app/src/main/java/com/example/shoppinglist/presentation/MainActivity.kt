@@ -1,5 +1,6 @@
 package com.example.shoppinglist.presentation
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -44,11 +45,16 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
         }
         val buttonAddShopItem = findViewById<FloatingActionButton>(R.id.floatingActionButton)
         buttonAddShopItem.setOnClickListener {
-            if (isOnePaneMode()){
+            if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentAddItem(this)
                 startActivity(intent)
             } else launchFragment(ShopItemFragment.newInstanceAddItem())
         }
+
+        contentResolver.query(
+            Uri.parse("content://com.test.shoppinglist/shop_items"),
+            null, null, null, null
+        )
     }
 
     private fun setupRecyclerView() {
@@ -83,7 +89,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
 
     private fun setupClickListener() {
         adapter.onShopItemClickListener = {
-            if (isOnePaneMode()){
+            if (isOnePaneMode()) {
                 val intent = ShopItemActivity.newIntentEditItem(this, it.id)
                 startActivity(intent)
             } else {
@@ -91,11 +97,12 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
         }
     }
-    private fun isOnePaneMode(): Boolean{
+
+    private fun isOnePaneMode(): Boolean {
         return shopItemContainer == null
     }
 
-    private fun launchFragment(fragment: Fragment){
+    private fun launchFragment(fragment: Fragment) {
         supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction()
             .addToBackStack(null)
