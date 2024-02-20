@@ -2,6 +2,7 @@ package com.example.shoppinglist.presentation
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppinglist.R
 import com.example.shoppinglist.ShopListApp
+import com.example.shoppinglist.domain.ShopItem
 import com.example.shoppinglist.presentation.ShopListAdapter.Companion.MAX_PULL_SIZE
 import com.example.shoppinglist.presentation.ShopListAdapter.Companion.SHOP_ITEM_DISABLED
 import com.example.shoppinglist.presentation.ShopListAdapter.Companion.SHOP_ITEM_ENABLED
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
 
@@ -51,10 +54,23 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             } else launchFragment(ShopItemFragment.newInstanceAddItem())
         }
 
-        contentResolver.query(
-            Uri.parse("content://com.test.shoppinglist/shop_items"),
-            null, null, null, null
-        )
+        thread {
+            val cursor = contentResolver.query(
+                Uri.parse("content://com.test.shoppinglist/shop_items"),
+                null, null, null, null
+            )
+            while (cursor?.moveToNext() == true) {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                val enabled = cursor.getInt(cursor.getColumnIndexOrThrow("enabled")) > 0
+                val count = cursor.getInt(cursor.getColumnIndexOrThrow("count"))
+                val shopItem = ShopItem(name = name, count = count, enabled = enabled, id = id)
+                Log.d("MainActivity", shopItem.toString())
+
+            }
+            cursor?.close()
+        }
+
     }
 
     private fun setupRecyclerView() {
